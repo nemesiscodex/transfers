@@ -2,6 +2,8 @@ package org.nemesiscodex.transfers.core.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.nemesiscodex.transfers.core.dto.LoginRequest;
 import org.nemesiscodex.transfers.core.dto.SignupRequest;
 import org.nemesiscodex.transfers.core.entity.User;
@@ -19,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
     private AuthService authService;
@@ -37,19 +40,25 @@ class AuthServiceTest {
     @Test
     void shouldSignupUser() {
         // Given
-        SignupRequest request = new SignupRequest("testuser", "password123", "test@example.com");
-        User savedUser = new User(
-            UUID.randomUUID(),
-            "testuser",
-            passwordEncoder.encode("password123"),
-            "test@example.com",
-            Instant.now(),
-            Instant.now()
-        );
+        String rawPassword = "password123";
+
+        String hashedPassword = passwordEncoder.encode(rawPassword);
+        User newUser = User.builder()
+        .id(UUID.randomUUID())
+        .username("testuser")
+        .passwordHash(hashedPassword)
+        .email("test@example.com")
+        .createdAt(Instant.now())
+        .updatedAt(Instant.now())
+        .build();
+        SignupRequest request = new SignupRequest(newUser.username(), rawPassword, newUser.email());
 
         when(userRepository.existsByUsername("testuser")).thenReturn(Mono.just(false));
         when(userRepository.existsByEmail("test@example.com")).thenReturn(Mono.just(false));
-        when(userRepository.save(any(User.class))).thenReturn(Mono.just(savedUser));
+        when(userRepository.save(any(User.class)))
+            .thenReturn(Mono.just(newUser));
+        when(userRepository.findById(newUser.id()))
+            .thenReturn(Mono.just(newUser));
 
         // When/Then
         StepVerifier.create(authService.signup(request))

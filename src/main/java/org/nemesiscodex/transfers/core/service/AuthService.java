@@ -33,7 +33,7 @@ public class AuthService {
             .then(Mono.defer(() -> {
                 User newUser = User.builder()
                     .username(request.username().trim())
-                    .passwordHash(passwordEncoder.encode(request.password()))
+                    .passwordHash(passwordEncoder.encode(request.password().trim()))
                     .email(request.email().trim().toLowerCase())
                     .build();
                 return userRepository.save(newUser)
