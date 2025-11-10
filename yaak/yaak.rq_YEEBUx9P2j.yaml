@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_YEEBUx9P2j
+createdAt: 2025-11-10T03:08:08.270466
+updatedAt: 2025-11-10T03:18:11.086976
+workspaceId: wk_LFrBzGtTpy
+folderId: null
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "username": "${[ user1_username ]}",
+      "password": "${[ user1_password ]}"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: gmCfyeC2bE
+method: POST
+name: login
+sortPriority: -1762741278291.0
+url: ${[ server_url ]}/auth/login
+urlParameters: []

@@ -1,0 +1,28 @@
+type: http_request
+model: http_request
+id: rq_Cinb3UUmWR
+createdAt: 2025-11-10T02:21:18.293233
+updatedAt: 2025-11-10T03:18:15.997558
+workspaceId: wk_LFrBzGtTpy
+folderId: null
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "username": "${[ user1_username ]}",
+      "password": "${[ user1_password ]}",
+      "email": "${[ user1_email ]}"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: EvyiMBasd4
+method: POST
+name: signup
+sortPriority: -1762741278291.0
+url: ${[ server_url ]}/auth/signup
+urlParameters: []

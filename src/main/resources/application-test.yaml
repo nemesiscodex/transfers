@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: transfers
+  main:
+    web-application-type: reactive
+  # Disable Flyway for tests
+  flyway:
+    enabled: false
+
+# Security: JWT configuration for testing
+jwt:
+  secret: testSecretKeyForJwtServiceTestingPurposesOnly123456
+  expiration-hours: 24
