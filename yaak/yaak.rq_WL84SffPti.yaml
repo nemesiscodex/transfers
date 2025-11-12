@@ -1,11 +1,12 @@
 type: http_request
 model: http_request
-id: rq_UdNiMUne64
-createdAt: 2025-11-10T03:18:19.615199
-updatedAt: 2025-11-12T03:57:30.657444
+id: rq_WL84SffPti
+createdAt: 2025-11-12T03:49:05.853667
+updatedAt: 2025-11-12T03:56:50.155175
 workspaceId: wk_LFrBzGtTpy
-folderId: fl_C9c4FZ5H53
+folderId: fl_SuhXw3k6eG
 authentication:
+  disabled: false
   token: ${[ responseExtensions(request='rq_YEEBUx9P2j', attribute='body', filter=b64'JC50b2tlbg', behavior='smart') ]}
 authenticationType: bearer
 body: {}
@@ -15,9 +16,9 @@ headers:
 - enabled: true
   name: ''
   value: ''
-  id: EFWIw9KPXH
+  id: dBGhW8R8sn
 method: GET
-name: user
-sortPriority: 2000.0
-url: ${[ server_url ]}/user
+name: balance
+sortPriority: -0.0001
+url: ${[ server_url ]}/naive/balance
 urlParameters: []

@@ -8,7 +8,6 @@ end;
 $$ language plpgsql;
 
 create table users(
-    -- UUID v7
     id uuid primary key not null default uuid_generate_v4(),
     username varchar(255) not null unique,
     password_hash varchar(255) not null,
