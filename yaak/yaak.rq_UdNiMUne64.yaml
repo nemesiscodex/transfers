@@ -2,9 +2,9 @@ type: http_request
 model: http_request
 id: rq_UdNiMUne64
 createdAt: 2025-11-10T03:18:19.615199
-updatedAt: 2025-11-10T03:21:32.893909
+updatedAt: 2025-11-12T01:49:07.522932
 workspaceId: wk_LFrBzGtTpy
-folderId: null
+folderId: fl_C9c4FZ5H53
 authentication: {}
 authenticationType: null
 body: {}
@@ -21,6 +21,6 @@ headers:
   id: F66tTDRER2
 method: GET
 name: user
-sortPriority: -1762741278291.0
+sortPriority: 2000.0
 url: ${[ server_url ]}/user
 urlParameters: []

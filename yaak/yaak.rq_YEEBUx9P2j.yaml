@@ -2,9 +2,9 @@ type: http_request
 model: http_request
 id: rq_YEEBUx9P2j
 createdAt: 2025-11-10T03:08:08.270466
-updatedAt: 2025-11-10T03:18:11.086976
+updatedAt: 2025-11-12T01:49:07.520176
 workspaceId: wk_LFrBzGtTpy
-folderId: null
+folderId: fl_C9c4FZ5H53
 authentication: {}
 authenticationType: null
 body:
@@ -22,6 +22,6 @@ headers:
   id: gmCfyeC2bE
 method: POST
 name: login
-sortPriority: -1762741278291.0
+sortPriority: 0.0
 url: ${[ server_url ]}/auth/login
 urlParameters: []

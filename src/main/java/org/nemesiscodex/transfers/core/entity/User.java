@@ -3,6 +3,7 @@ package org.nemesiscodex.transfers.core.entity;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Builder;
+import org.nemesiscodex.transfers.core.dto.SignupRequest;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -21,4 +22,11 @@ public record User(
     @Column("updated_at")
     Instant updatedAt
 ) {
+    public static User from(SignupRequest request, String encondedPassword) {
+        return User.builder()
+            .username(request.username())
+            .passwordHash(encondedPassword)
+            .email(request.email())
+            .build();
+    }
 }

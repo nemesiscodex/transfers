@@ -18,8 +18,7 @@ public class TestContainers {
     @Bean
     @ServiceConnection(name = "redis")
     GenericContainer<?> redisContainer() {
-        return new GenericContainer<>(DockerImageName.parse("valkey/valkey:latest"))
-            .withExposedPorts(6379);
+        return new GenericContainer<>(DockerImageName.parse("valkey/valkey:latest"));
     }
 
 }

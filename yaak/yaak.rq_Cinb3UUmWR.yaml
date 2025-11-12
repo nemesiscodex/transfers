@@ -2,9 +2,9 @@ type: http_request
 model: http_request
 id: rq_Cinb3UUmWR
 createdAt: 2025-11-10T02:21:18.293233
-updatedAt: 2025-11-10T03:18:15.997558
+updatedAt: 2025-11-12T01:49:07.521917
 workspaceId: wk_LFrBzGtTpy
-folderId: null
+folderId: fl_C9c4FZ5H53
 authentication: {}
 authenticationType: null
 body:
@@ -23,6 +23,6 @@ headers:
   id: EvyiMBasd4
 method: POST
 name: signup
-sortPriority: -1762741278291.0
+sortPriority: 1000.0
 url: ${[ server_url ]}/auth/signup
 urlParameters: []

@@ -1,7 +1,5 @@
 package org.nemesiscodex.transfers.core.service;
 
-import java.time.Instant;
-import java.util.UUID;
 import org.nemesiscodex.transfers.core.dto.LoginRequest;
 import org.nemesiscodex.transfers.core.dto.SignupRequest;
 import org.nemesiscodex.transfers.core.entity.User;
@@ -31,11 +29,8 @@ public class AuthService {
     public Mono<User> signup(SignupRequest request) {
         return validateUniqueness(request)
             .then(Mono.defer(() -> {
-                User newUser = User.builder()
-                    .username(request.username().trim())
-                    .passwordHash(passwordEncoder.encode(request.password().trim()))
-                    .email(request.email().trim().toLowerCase())
-                    .build();
+                String encodedPassword = passwordEncoder.encode(request.password().trim());
+                User newUser = User.from(request, encodedPassword);
                 return userRepository.save(newUser)
                     .flatMap(user -> userRepository.findById(user.id()));
             }));
@@ -43,25 +38,20 @@ public class AuthService {
 
     public Mono<AuthenticationResult> login(LoginRequest request) {
         return userRepository.findByUsername(request.username())
-            .switchIfEmpty(Mono.error(new BadCredentialsException("Invalid username or password")))
             .filter(user -> passwordEncoder.matches(request.password(), user.passwordHash()))
             .switchIfEmpty(Mono.error(new BadCredentialsException("Invalid username or password")))
             .map(user -> new AuthenticationResult(user, this.jwtService.generateToken(user.id(), user.username())));
     }
 
     private Mono<Void> validateUniqueness(SignupRequest request) {
-        return userRepository.existsByUsername(request.username())
-            .flatMap(usernameTaken -> {
-                if (Boolean.TRUE.equals(usernameTaken)) {
-                    return Mono.<Void>error(new IllegalStateException("Username already exists"));
+        var existEmail = userRepository.existsByEmail(request.email());
+        var existUsername = userRepository.existsByUsername(request.username());
+        return Mono.zip(existEmail, existUsername)
+            .flatMap(tuple -> {
+                if (Boolean.TRUE.equals(tuple.getT1()) || Boolean.TRUE.equals(tuple.getT2())) {
+                    return Mono.error(new IllegalStateException("Username or email already exists"));
                 }
-                return userRepository.existsByEmail(request.email())
-                    .flatMap(emailTaken -> {
-                        if (Boolean.TRUE.equals(emailTaken)) {
-                            return Mono.<Void>error(new IllegalStateException("Email already exists"));
-                        }
-                        return Mono.<Void>empty();
-                    });
+                return Mono.empty();
             });
     }
 

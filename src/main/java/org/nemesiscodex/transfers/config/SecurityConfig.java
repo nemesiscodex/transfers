@@ -1,6 +1,5 @@
 package org.nemesiscodex.transfers.config;
 
-import java.time.Instant;
 import org.nemesiscodex.transfers.core.repository.UserRepository;
 import org.nemesiscodex.transfers.core.security.JwtAuthenticationWebFilter;
 import org.springframework.beans.factory.ObjectProvider;
