@@ -8,6 +8,7 @@ import org.nemesiscodex.transfers.core.dto.LoginRequest;
 import org.nemesiscodex.transfers.core.dto.SignupRequest;
 import org.nemesiscodex.transfers.core.entity.User;
 import org.nemesiscodex.transfers.core.repository.UserRepository;
+import org.nemesiscodex.transfers.core.util.DbTransactionUtil;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,13 +29,15 @@ class AuthServiceTest {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private JwtService jwtService;
+    private DbTransactionUtil db;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         passwordEncoder = new BCryptPasswordEncoder();
         jwtService = mock(JwtService.class);
-        authService = new AuthService(userRepository, passwordEncoder, jwtService);
+        db = mock(DbTransactionUtil.class);
+        authService = new AuthService(userRepository, passwordEncoder, jwtService, db);
     }
 
     @Test
@@ -60,6 +63,7 @@ class AuthServiceTest {
         when(userRepository.findById(newUser.id()))
             .thenReturn(Mono.just(newUser));
 
+        when(db.runInTransaction(any())).thenCallRealMethod();
         // When/Then
         StepVerifier.create(authService.signup(request))
             .assertNext(user -> {
@@ -81,11 +85,14 @@ class AuthServiceTest {
         SignupRequest request = new SignupRequest("existinguser", "password123", "test@example.com");
 
         when(userRepository.existsByUsername("existinguser")).thenReturn(Mono.just(true));
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(Mono.just(false));
 
         // When/Then
-        StepVerifier.create(authService.signup(request))
-            .expectErrorMatches(ex -> ex instanceof IllegalStateException
-                && ex.getMessage().equals("Username already exists"))
+        authService.signup(request).as(StepVerifier::create)
+            .expectErrorSatisfies(ex -> {
+                assertThat(ex).isInstanceOf(IllegalStateException.class);
+                assertThat(ex.getMessage()).isEqualTo("Username or email already exists");
+            })
             .verify();
 
         verify(userRepository, never()).save(any(User.class));
@@ -101,8 +108,10 @@ class AuthServiceTest {
 
         // When/Then
         StepVerifier.create(authService.signup(request))
-            .expectErrorMatches(ex -> ex instanceof IllegalStateException
-                && ex.getMessage().equals("Email already exists"))
+            .expectErrorSatisfies(ex -> {
+                assertThat(ex).isInstanceOf(IllegalStateException.class);
+                assertThat(ex.getMessage()).isEqualTo("Username or email already exists");
+            })
             .verify();
 
         verify(userRepository, never()).save(any(User.class));

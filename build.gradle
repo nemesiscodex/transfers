@@ -74,5 +74,6 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
     // Security: always use test profile for all tests
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
     systemProperty 'spring.profiles.active', 'test'
 }

@@ -1,37 +1,31 @@
 package org.nemesiscodex.transfers.core.service;
 
+import lombok.RequiredArgsConstructor;
 import org.nemesiscodex.transfers.core.dto.LoginRequest;
 import org.nemesiscodex.transfers.core.dto.SignupRequest;
 import org.nemesiscodex.transfers.core.entity.User;
 import org.nemesiscodex.transfers.core.repository.UserRepository;
+import org.nemesiscodex.transfers.core.util.DbTransactionUtil;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-
-    public AuthService(
-        UserRepository userRepository,
-        PasswordEncoder passwordEncoder,
-        JwtService jwtService
-    ) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-    }
+    private final DbTransactionUtil db;
 
     public Mono<User> signup(SignupRequest request) {
         return validateUniqueness(request)
             .then(Mono.defer(() -> {
                 String encodedPassword = passwordEncoder.encode(request.password().trim());
                 User newUser = User.from(request, encodedPassword);
-                return userRepository.save(newUser)
+                return db.runInTransaction(() -> userRepository.save(newUser))
                     .flatMap(user -> userRepository.findById(user.id()));
             }));
     }
